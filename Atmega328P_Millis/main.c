@@ -55,8 +55,16 @@ int main(void) {
 	
 	DDRB |= (1 << LED);  // LED pin as output
 
+	uint32_t start = millis();
+	uint32_t ms = 500;
+	
 	while (1) {
-		PORTB ^= (1 << LED); // toggle LED pin with XOR
-		delay(500);
+		// You could do multiple blocks like this for different tasks with different intervals...
+		if( millis() - start >= ms ) {
+			PORTB ^= (1 << LED); // toggle LED pin with XOR
+			start += ms;
+		}
+		
+		// do something useful here...
 	}
 }
