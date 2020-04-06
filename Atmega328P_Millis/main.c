@@ -50,15 +50,13 @@ void delay( uint32_t ms ) {
 	while( millis() - start < ms );
 }
 
-int main(void)
-{
+int main(void) {
 	init_millis();
 	
-	DDRB |= (1 << LED);
+	DDRB |= (1 << LED);  // LED pin as output
 
-	while (1) 
-	{
-		PORTB ^= (1 << LED);
+	while (1) {
+		PORTB ^= (1 << LED); // toggle LED pin with XOR
 		delay(500);
 	}
 }
