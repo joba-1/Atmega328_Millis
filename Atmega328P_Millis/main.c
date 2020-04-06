@@ -56,9 +56,9 @@ int main(void)
 	
 	DDRB |= (1 << LED);
 
-    while (1) 
-    {
+	while (1) 
+	{
 		PORTB ^= (1 << LED);
 		delay(500);
-    }
+	}
 }
