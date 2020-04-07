@@ -89,12 +89,16 @@ void toggle( payload_t *payload ) {
 int main(void) {
 	init_millis();
 	
-	DDRB |= (1 << LED);  // LED pin as output
+	DDRB |= (1 << LED);   // LED pin as output
+	PORTB &= ~(1 << LED); // Start with LED off
 
 	static payload_t p = { LED };
-	static job_t job1 = { toggle, &p, 28 };
-	static job_t job2 = { toggle, &p, 27 }; // nice breathing effect
+	static job_t job1 = { toggle, &p, 28 };  // Nice LED breathing effect...
+	static job_t job2 = { toggle, &p, 27 };  // ...by slightly out of sync jobs
 
+	job_init(&job1);
+	job_init(&job2);
+	
 	while (1) {
 		// You could do multiple jobs like this for different tasks with different intervals...
 		job_do(&job1);
