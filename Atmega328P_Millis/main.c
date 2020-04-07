@@ -50,20 +50,53 @@ void delay( uint32_t ms ) {
 	while( millis() - start < ms );
 }
 
+
+// Structure holding all parameters necessary for a task
+typedef struct payload {
+	int pin; // pin to toggle
+} payload_t;
+
+// Function type of a task to execute with payload parameter
+typedef void (*task_t)( payload_t *payload );
+
+// Job defines task to execute with payload parameter at regular intervals
+typedef struct job {
+	task_t task;
+	payload_t *payload;
+	uint32_t ms;
+	uint32_t start;
+} job_t;
+
+// Init job by storing start time
+void job_init( job_t *job ) {
+	job->start = millis();
+}
+
+// Execute task if delay has elapsed
+void job_do( job_t *job ) {
+	if( millis() - job->start >= job->ms ) {
+		job->start += job->ms;
+		(*job->task)(job->payload);
+	}
+}
+
+
+// Task to do at regular intervals
+void toggle( payload_t *payload ) {
+	PORTB ^= (1 << payload->pin); // toggle LED pin with XOR
+}
+
 int main(void) {
 	init_millis();
 	
 	DDRB |= (1 << LED);  // LED pin as output
 
-	uint32_t start = millis();
-	uint32_t ms = 500;
-	
+	payload_t p = { LED };
+	job_t job = { toggle, &p, 500 };
+
 	while (1) {
-		// You could do multiple blocks like this for different tasks with different intervals...
-		if( millis() - start >= ms ) {
-			PORTB ^= (1 << LED); // toggle LED pin with XOR
-			start += ms;
-		}
+		// You could do multiple jobs like this for different tasks with different intervals...
+		job_do(&job);
 		
 		// do something useful here...
 	}
