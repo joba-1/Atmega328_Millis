@@ -91,12 +91,14 @@ int main(void) {
 	
 	DDRB |= (1 << LED);  // LED pin as output
 
-	payload_t p = { LED };
-	job_t job = { toggle, &p, 500 };
+	static payload_t p = { LED };
+	static job_t job1 = { toggle, &p, 28 };
+	static job_t job2 = { toggle, &p, 27 }; // nice breathing effect
 
 	while (1) {
 		// You could do multiple jobs like this for different tasks with different intervals...
-		job_do(&job);
+		job_do(&job1);
+		job_do(&job2);
 		
 		// do something useful here...
 	}
